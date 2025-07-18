@@ -5,6 +5,7 @@
   <title>Review</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="./cssandjs/chart.js"></script>
 
    <style>
     * {
@@ -14,14 +15,14 @@
 
     body {
       margin: 0;
-      padding: 20px;
+      padding: 10px;
       background: #f4f7fa;
       color: #333;
     }
 
     h1 {
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 5px;
     }
 
     .controls {
@@ -77,10 +78,12 @@
     }
 
     button {
+      margin: 0px;
+      font-size: 1px;
       background-color: #3498db;
       color: white;
       border: none;
-      border-radius: 3px;
+      border-radius: 0px;
       cursor: pointer;
       transition: background 0.3s ease;
     }
@@ -147,14 +150,14 @@
   <div class="controls">
     <label for="numQuestions">Number of Questions:</label>
     <input type="number" id="numQuestions" value="100" min="1" max="5000" />
-    <button onclick="generateQuestions()">Generate</button>
-    <button onclick="saveProgressToFile()">Save Progress</button>
-    <button onclick="LoadProgressfromFile()">Load Progress</button>
-    <button onclick="startTimer(generatedQuestions.length)">Start Timer</button>
-    <button onclick="markAnswer(true)">Correct</button>
-    <button onclick="markAnswer(false)">Wrong</button>
-    <button onclick="previousQuestion()">Prev</button>
-    <button onclick="nextQuestion()">Next</button>
+<button onclick="generateQuestions()">🎲Generate</button>
+<button onclick="saveProgressToFile()">💾Save</button>
+<button onclick="LoadProgressfromFile()">📂Load</button>
+<button onclick="startTimer(generatedQuestions.length)">⏱timer</button>
+<button onclick="markAnswer(true)">✅Correct</button>
+<button onclick="markAnswer(false)">❌Wrong</button>
+<button onclick="previousQuestion()">⬅️Previous</button>
+<button onclick="nextQuestion()">➡️Next</button>
     <label for="gotoQuestionNumbval">Go to #:</label>
     <input type="number" id="gotoQuestionNumbval" value="1" min="1" max="5000" />
     <button onclick="gotoQuestion()">Go</button>
