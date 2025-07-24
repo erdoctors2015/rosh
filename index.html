@@ -11,162 +11,182 @@
 <script src="./cssandjs/chart.js"></script>
 
    <style>
-    * {
-      box-sizing: border-box;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    }
+* {
+  box-sizing: border-box;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
 
-    body {
-      margin: 0;
-      padding: 10px;
-      background: #f4f7fa;
-      color: #333;
-    }
+body {
+  margin: 0;
+  padding: 10px;
+  background: #f4f7fa;
+  color: #333;
+}
 
-    h1 {
-      text-align: center;
-      margin-bottom: 5px;
-    }
+h1 {
+  text-align: center;
+  margin-bottom: 5px;
+}
 
-    .controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
-      margin-bottom: 20px;
-    }
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
 
-    .controls label,
-    .controls input,
-    .controls button {
-      padding: 5px 10px;
-      font-size: 1em;
-    }
+.controls label,
+.controls input,
+.controls button {
+  padding: 5px 10px;
+  font-size: 1em;
+}
 
-    .container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      max-width: 600px;
-      margin: 20px auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    }
+.container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 600px;
+  margin: 20px auto;
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
 
-    canvas {
-      width: 120px !important;
-      height: 120px !important;
-    }
+canvas {
+  width: 120px !important;
+  height: 120px !important;
+}
 
-    .stats-text {
-      font-size: 14px;
-      color: #333;
-      white-space: pre-line;
-    }
+.stats-text {
+  font-size: 14px;
+  color: #333;
+  white-space: pre-line;
+}
 
-    #notePanel {
-      display: none;
-      margin-top: 10px;
-    }
+#notePanel {
+  display: none;
+  margin-top: 10px;
+}
 
-    textarea {
-      width: 100%;
-      max-width: 100%;
-      margin: 10px 0;
-      padding: 10px;
-      font-size: 1em;
-      resize: vertical;
-    }
+textarea {
+  width: 100%;
+  margin: 10px 0;
+  padding: 10px;
+  font-size: 1em;
+  resize: vertical;
+}
 
-    button {
-      margin: 0px;
-      font-size: 1px;
-      background-color: #3498db;
-      color: white;
-      border: none;
-      border-radius: 0px;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
+button {
+  font-size: 1em;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
 
-    button:hover {
-      background-color: #2980b9;
-    }
+button:hover {
+  background-color: #2980b9;
+}
 
-    .resizer {
-      resize: both;
-      overflow: hidden;
-      width: 100%;
-      height: 500px;
-      border: 1px solid #bbb;
-      background: #fff;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      margin-bottom: 20px;
-    }
+.resizer {
+  resize: both;
+  overflow: auto;
+  width: 100%;
+  height: 700px;
+  border: 1px solid #bbb;
+  background: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
 
-    .resized {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
+.resized {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
 
-    #questionNumbers {
-      text-align: center;
-      margin-bottom: 10px;
-    }
+#questionNumbers {
+  text-align: center;
+  margin-bottom: 10px;
+}
 
-    #progress-bar {
-      width: 100%;
-      height: 20px;
-      margin-top: 10px;
-      display: none;
-    }
+#progress-bar {
+  width: 100%;
+  height: 20px;
+  margin-top: 10px;
+  display: none;
+}
 
-    #timer {
-      text-align: center;
-      font-weight: bold;
-      margin-top: 10px;
-    }
- .nav-tabs {
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      display: flex;
-      justify-content: space-around;
-      background: #e0e0e0;
-      padding: 8px;
-      box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
-    }
+#timer {
+  text-align: center;
+  font-weight: bold;
+  margin-top: 10px;
+}
 
-    .nav-tabs button {
-      flex: 1;
-      border: none;
-      background: none;
-      font-size: 1.2em;
-    }
-    @media screen and (max-width: 600px) {
-      .controls {
-        flex-direction: column;
-        align-items: stretch;
-      }
+/* Top Navigation - Responsive Two-Line Layout */
+.nav-tob {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  background: #e0e0e0;
+  padding: 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
 
-      iframe {
-        height: 400px;
-      }
+/* Bottom Navigation */
+.nav-tabs {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  background: #e0e0e0;
+  padding: 8px;
+  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.1);
+}
 
-      .container {
-        flex-direction: column;
-        align-items: center;
-      }
-    }
+.nav-tabs button {
+  flex: 1;
+  margin: 1px;
+  border: none;
+  background: none;
+  font-size: 1.2em;
+}
+
+/* Responsive Layout */
+@media screen and (max-width: 600px) {
+  .controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  iframe {
+    height: 400px;
+  }
+
+  .container {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
   </style>
 </head>
 <body>
   <h1>Review Dashboard</h1>
 
-  <div class="controls">
+  <div  class="nav-tob" >
     <label for="numQuestions">Number of Questions:</label>
     <input type="number" id="numQuestions" value="100" min="1" max="5000" />
 <button onclick="generateQuestions()">🎲Generate</button>
@@ -223,7 +243,7 @@
   else folder = 11;
   const path = `${folder}/${val}.html#question_description`;
   document.getElementById('questionFrame').src = path;
-">🏠</button>
+">❓</button>
 
 <button onclick="
   const val = generatedQuestions[questionIndex];
@@ -241,8 +261,10 @@
   else folder = 11;
   const path = `${folder}/${val}.html#answer_detail`;
   document.getElementById('questionFrame').src = path;
-">📊</button>
+">💬</button>
     <button onclick="toggleNotePanel()">📝</button>
+	<button onclick="previousQuestion()">⬅️Previous</button>
+<button onclick="nextQuestion()">➡️Next</button>
   </div>
   <script>
     let questionIndex = 0;
@@ -433,9 +455,31 @@ function displayStats() {
         }
       }, 1000);
     }
+    
+	async function autoLoadProgress() {
+  try {
+    const response = await fetch('./review-progress.json');
+    if (!response.ok) throw new Error('File not found');
+
+    const data = await response.json();
+    generatedQuestions = data.generatedQuestions || [];
+    correctAnswers = data.correctAnswers || 0;
+    wrongAnswers = data.wrongAnswers || 0;
+    questionIndex = data.questionIndex || 0;
+    document.getElementById('answerBox').value = data.answerBox || '';
+    document.getElementById('answerBox2').value = data.answerBox2 || '';
+
+    displayQuestion();
+    displayStats();
+  } catch (error) {
+    console.warn('📂 Auto-load failed:', error.message);
+	generateQuestions();
+  }
+}
 
     window.onload = () => {
-      generateQuestions();
+      // generateQuestions();
+	  autoLoadProgress(); // Load saved data automatically
     };
   </script>
 

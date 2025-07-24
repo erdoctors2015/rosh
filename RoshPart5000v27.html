@@ -98,7 +98,7 @@ button:hover {
   resize: both;
   overflow: auto;
   width: 100%;
-  height: 500px;
+  height: 700px;
   border: 1px solid #bbb;
   background: #fff;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -243,7 +243,7 @@ button:hover {
   else folder = 11;
   const path = `${folder}/${val}.html#question_description`;
   document.getElementById('questionFrame').src = path;
-">🏠</button>
+">❓</button>
 
 <button onclick="
   const val = generatedQuestions[questionIndex];
@@ -261,8 +261,10 @@ button:hover {
   else folder = 11;
   const path = `${folder}/${val}.html#answer_detail`;
   document.getElementById('questionFrame').src = path;
-">📊</button>
+">💬</button>
     <button onclick="toggleNotePanel()">📝</button>
+	<button onclick="previousQuestion()">⬅️Previous</button>
+<button onclick="nextQuestion()">➡️Next</button>
   </div>
   <script>
     let questionIndex = 0;
@@ -453,9 +455,31 @@ function displayStats() {
         }
       }, 1000);
     }
+    
+	async function autoLoadProgress() {
+  try {
+    const response = await fetch('./review-progress.json');
+    if (!response.ok) throw new Error('File not found');
+
+    const data = await response.json();
+    generatedQuestions = data.generatedQuestions || [];
+    correctAnswers = data.correctAnswers || 0;
+    wrongAnswers = data.wrongAnswers || 0;
+    questionIndex = data.questionIndex || 0;
+    document.getElementById('answerBox').value = data.answerBox || '';
+    document.getElementById('answerBox2').value = data.answerBox2 || '';
+
+    displayQuestion();
+    displayStats();
+  } catch (error) {
+    console.warn('📂 Auto-load failed:', error.message);
+	generateQuestions();
+  }
+}
 
     window.onload = () => {
-      generateQuestions();
+      // generateQuestions();
+	  autoLoadProgress(); // Load saved data automatically
     };
   </script>
 
