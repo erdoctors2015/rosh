@@ -226,7 +226,7 @@ button:hover {
 
 <div id="sidebarMenu" class="sidebar-menu">
   <h4>خيارات عرض الأزرار:</h4>
-  <label><input type="checkbox" onchange="toggleButton('btn-gnrat')" checked> 🎲Generate</label><br>
+  <label><input type="checkbox" onchange="toggleButton('btn-gnrat');toggleButton('numQuestions');toggleButton('btn-gnratla')" checked> 🎲Generate</label><br>
    <label><input type="checkbox" onchange="toggleButton('btn-save')" checked> 💾Save</label><br>
    <label><input type="checkbox" onchange="toggleButton('btn-Load')" checked> 📂Load</label><br>
    <label><input type="checkbox" onchange="toggleButton('btn-timer')" checked> ⏱timer</label><br>   
@@ -238,13 +238,14 @@ button:hover {
    <label><input type="checkbox" onchange="toggleButton('btn-Note2')" checked> 📝 Note</label><br>
    <label><input type="checkbox" onchange="toggleButton('btn-Load2')" checked> 📂LoadOldQ</label><br>  
    <label><input type="checkbox" onchange="toggleButton('btn-save2')" checked> 💾 SaveAllQ</label><br>
+   <label><input type="checkbox" onchange="toggleButton('btn-go');toggleButton('gotoQuestionNumbval');toggleButton('btn-gola')" checked> Go to</label><br>
 
 
   
 </div>
 
   <div  class="nav-tob" >
-    <label for="numQuestions">Number of Questions:</label>
+    <label id="btn-gnratla" for="numQuestions">Number of Questions:</label>
     <input type="number" id="numQuestions" value="100" min="1" max="5000" />
 <button id="btn-gnrat" onclick="generateQuestions()">🎲Generate</button>
 <button id="btn-save" onclick="saveProgressToFile()">💾Save</button>
@@ -255,9 +256,9 @@ button:hover {
 <button id="btn-prev" onclick="previousQuestion()">⬅️Previous</button>
 <button id="btn-next" onclick="nextQuestion()">➡️Next</button>
 
-    <label for="gotoQuestionNumbval">Go to #:</label>
+    <label id="btn-gola" for="gotoQuestionNumbval">Go to #:</label>
     <input type="number" id="gotoQuestionNumbval" value="1" min="1" max="5000" />
-    <button onclick="gotoQuestion()">Go</button>
+    <button id="btn-go" onclick="gotoQuestion()">Go</button>
     <button id="btn-Note" onclick="toggleNotePanel()">📝 Note</button>
   </div>
 
