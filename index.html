@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="mobile-web-app-capable" content="yes" />
-  <link rel="manifest" href="manifest.json" />
+  <link rel="manifest" href="./cssandjs/manifest.json" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="./cssandjs/chart.js"></script>
 
@@ -212,6 +212,7 @@ button:hover {
   padding: 20px;
   transition: left 0.3s ease;
   z-index: 1999;
+  overflow-y: auto;
 }
 
 .sidebar-menu.open {
@@ -239,6 +240,25 @@ button:hover {
    <label><input type="checkbox" onchange="toggleButton('btn-Load2')" checked> 📂LoadOldQ</label><br>  
    <label><input type="checkbox" onchange="toggleButton('btn-save2')" checked> 💾 SaveAllQ</label><br>
    <label><input type="checkbox" onchange="toggleButton('btn-go');toggleButton('gotoQuestionNumbval');toggleButton('btn-gola')" checked> Go to</label><br>
+   <br><br><br>
+   
+  <input type="text" id="searchInput" placeholder="🔍 أدخل كلمة للبحث" style="padding:6px; width:220px; font-size:1em;" />
+  <button onclick="searchInFiles()" style="padding:6px 12px; font-size:1em;">بحث</button>
+<div id="searchResults" style="margin-top:20px; padding:10px; background:#fff; border-radius:6px; box-shadow:0 2px 4px rgba(0,0,0,0.1);"></div>
+
+<div id="progressBarContainer" style="width: 100%; background-color: #e0e0e0; border-radius: 5px; margin-top: 10px; display: none;">
+  <div id="progressBar" style="width: 0%; background-color: #4CAF50; height: 25px; border-radius: 5px; text-align: center; line-height: 25px; color: white;">
+    <span id="progressText">0%</span>
+  </div>
+</div>
+<p id="etaText" style="text-align: center; margin-top: 5px; font-size: 0.9em; color: #555;"></p>
+
+<button id="saveResultsBtn" onclick="saveSearchResults()" style="margin-top: 15px; padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; display: none;">
+  حفظ النتائج
+</button>
+
+<div id="searchResults" style="margin-top: 20px;">
+  </div>
 
 
   
@@ -255,6 +275,12 @@ button:hover {
 <button id="btn-wrong" onclick="markAnswer(false)">❌Wrong</button>
 <button id="btn-prev" onclick="previousQuestion()">⬅️Previous</button>
 <button id="btn-next" onclick="nextQuestion()">➡️Next</button>
+
+
+
+
+
+
 
     <label id="btn-gola" for="gotoQuestionNumbval">Go to #:</label>
     <input type="number" id="gotoQuestionNumbval" value="1" min="1" max="5000" />
@@ -441,7 +467,152 @@ function displayStats() {
 }
 
 
+async function searchInFiles() {
+  const keyword = document.getElementById("searchInput").value.trim();
+  const resultsEl = document.getElementById("searchResults");
+  const progressBarContainer = document.getElementById("progressBarContainer");
+  const progressBar = document.getElementById("progressBar");
+  const progressText = document.getElementById("progressText");
+  const etaText = document.getElementById("etaText");
+  const saveResultsBtn = document.getElementById("saveResultsBtn");
 
+  // Clear previous results and show loading indicator
+  resultsEl.innerHTML = "🔄 جاري البحث...";
+  progressBarContainer.style.display = "block"; // Show the progress bar container
+  progressBar.style.width = "0%";
+  progressText.textContent = "0%";
+  etaText.textContent = "";
+  saveResultsBtn.style.display = "none"; // Hide save button initially
+
+  if (!keyword) {
+    resultsEl.innerHTML = "❗ يرجى إدخال كلمة للبحث.";
+    progressBarContainer.style.display = "none"; // Hide progress bar if no keyword
+    return;
+  }
+
+  const matchedFiles = [];
+  const startFile = 525583622;
+  const endFile = 525588621;
+  const totalFiles = endFile - startFile + 1;
+  let filesProcessed = 0;
+  const startTime = Date.now(); // Record start time for ETC calculation
+
+  // Function to determine folder based on file number
+  const getFolder = (fileNumber) => {
+    if (fileNumber >= 525583622 && fileNumber <= 525584099) return 1;
+    if (fileNumber <= 525584599) return 2;
+    if (fileNumber <= 525585099) return 3;
+    if (fileNumber <= 525585599) return 4;
+    if (fileNumber <= 525586099) return 5;
+    if (fileNumber <= 525586599) return 6;
+    if (fileNumber <= 525587099) return 7;
+    if (fileNumber <= 525587599) return 8;
+    if (fileNumber <= 525588099) return 9;
+    if (fileNumber <= 525588599) return 10;
+    if (fileNumber <= 525588621) return 11;
+    return null; // Should not happen with current range
+  };
+
+  for (let i = startFile; i <= endFile; i++) {
+    const folder = getFolder(i);
+    if (folder === null) {
+      filesProcessed++; // Still count this file as processed even if outside range
+      continue;
+    }
+
+    const path = `${folder}/${i}.html`;
+    try {
+      const res = await fetch(path);
+      if (res.ok) {
+        const text = await res.text();
+        if (text.includes(keyword)) {
+          // هنا نقوم بحفظ المسار الكامل لغرض العرض في الواجهة
+          matchedFiles.push(`<a href="${path}" target="_blank">${path}</a>`);
+        }
+      }
+    } catch (err) {
+      // Ignore network errors
+    } finally {
+      filesProcessed++;
+      const progress = (filesProcessed / totalFiles) * 100;
+      progressBar.style.width = `${progress}%`;
+      progressText.textContent = `${progress.toFixed(1)}%`;
+
+      // Calculate and update ETA
+      const elapsedTime = Date.now() - startTime; // in milliseconds
+      if (filesProcessed > 0) { // Avoid division by zero
+        const timePerFile = elapsedTime / filesProcessed;
+        const remainingFiles = totalFiles - filesProcessed;
+        const estimatedRemainingTime = timePerFile * remainingFiles; // in milliseconds
+
+        const minutes = Math.floor(estimatedRemainingTime / 60000);
+        const seconds = Math.floor((estimatedRemainingTime % 60000) / 1000);
+        etaText.textContent = `الوقت المتبقي: ${minutes}د ${seconds}ث`;
+      }
+    }
+  }
+
+  // Hide progress bar once search is complete
+  progressBarContainer.style.display = "none";
+
+  // Display results
+  if (matchedFiles.length === 0) {
+    resultsEl.innerHTML = `😕 لا توجد نتائج لكلمة البحث "${keyword}"`;
+  } else {
+    resultsEl.innerHTML = `<h3>📂 ملفات تحتوي على "${keyword}":</h3><ul>` +
+      matchedFiles.map(file => `<li>${file}</li>`).join('') +
+      `</ul>`;
+    saveResultsBtn.style.display = "block"; // Show save button if results exist
+  }
+
+  // Store results for saving in the desired JSON format
+  // Extract only the file numbers from the paths for JSON
+  window.currentSearchResultsForJson = matchedFiles.map(fileLink => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(fileLink, 'text/html');
+    const fullPath = doc.querySelector('a').href;
+    // Extract the number from the path (e.g., "1/525583725.html" -> 525583725)
+    const match = fullPath.match(/\/(\d+)\.html$/);
+    return match ? parseInt(match[1], 10) : null;
+  }).filter(id => id !== null); // Filter out any nulls if parsing fails
+}
+
+// Function to save results
+function saveSearchResults() {
+  if (window.currentSearchResultsForJson && window.currentSearchResultsForJson.length > 0) {
+    const keyword = document.getElementById("searchInput").value.trim();
+    
+    // بناء الكائن JSON المطلوب
+    const dataToSave = {
+      generatedQuestions: window.currentSearchResultsForJson,
+      correctAnswers: 0,
+      wrongAnswers: 0,
+      questionIndex: 0,
+      answerBox: "",
+      answerBox2: ""
+    };
+
+    const jsonString = JSON.stringify(dataToSave, null, 2); // 2 للمسافات البادئة لتنسيق جميل
+    
+    const blob = new Blob([jsonString], {
+      type: "application/json;charset=utf-8"
+    });
+    // اسم الملف سيكون كلمة البحث مع امتداد .json
+    const filename = `${keyword}.json`;
+    
+    // إنشاء رابط تنزيل وتفعيل النقر عليه
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(a.href); // تنظيف كائن URL
+  } else {
+    alert("لا توجد نتائج لحفظها!");
+  }
+}
+  
     function nextQuestion() {
       if (questionIndex < generatedQuestions.length - 1) {
         questionIndex++;
@@ -564,7 +735,19 @@ function toggleButton(id) {
   btn.style.display = btn.style.display === 'none' ? 'inline-block' : 'none';
 }
 
+document.addEventListener('click', function(event) {
+  const sidebarMenu = document.getElementById('sidebarMenu');
+  const sidebarToggle = document.querySelector('.sidebar-toggle'); // زر الفتح/الإغلاق
 
+  // التحقق مما إذا كانت القائمة الجانبية مفتوحة
+  if (sidebarMenu.classList.contains('open')) {
+    // التحقق مما إذا كان النقر خارج القائمة الجانبية وخارج زر التبديل
+    // event.target هو العنصر الذي تم النقر عليه
+    if (!sidebarMenu.contains(event.target) && !sidebarToggle.contains(event.target)) {
+      sidebarMenu.classList.remove('open'); // إغلاق القائمة الجانبية
+    }
+  }
+});
 
   let previousQuestions = [];
 
